@@ -49,6 +49,8 @@ class Application {
 
     private final Scanner scanner;
 
+    private boolean isTestDataGenerated = false;
+
     public Application() {
         this.scanner = new Scanner(System.in);
         this.onMainLoop = true;
@@ -80,7 +82,7 @@ class Application {
     public void run() {
         while (onMainLoop) {
             showMenu();
-            int option = readIntInRange(1, 8, "Seleccione una opción válida (1-8): ");
+            int option = readIntInRange(1, 9, "Seleccione una opción válida (1-9): ");
             processMenuOption(option);
         }
         
@@ -121,12 +123,83 @@ class Application {
             case 5 -> {requestAttendNextRequest();}
             case 6 -> {viewPendingRequests();}
             case 7 -> {requestCompleteRequests();}
-            case 8 -> {
+            case 8 -> {generateTestData();}
+            case 9 -> {
                 System.out.println("Saliendo del sistema...");
                 this.onMainLoop = false;
             }
             default -> System.out.println("Opción no implementada.");
         }
+    }
+
+    public void generateTestData() {
+
+        if (isTestDataGenerated) {
+            System.out.println("Los datos de prueba ya han sido generados.");
+            System.out.println("Presione cualquier tecla para continuar...");
+            scanner.nextLine(); // limpiar entrada
+            scanner.nextLine(); // esperar a que el usuario presione Enter
+            System.out.println("-----------------------------------\n");
+            return;
+        }
+
+        // Generar empleados de prueba
+        Employee emp1 = new Employee();
+        emp1.name = "Juan Pérez";
+        emp1.email = "juanperez@gmail.com";
+        emp1.area = "Soporte";
+        emp1.code = "EMP001";
+        employees.add(emp1);
+        
+        Employee emp2 = new Employee();
+        emp2.name = "Andres Ibañez";
+        emp2.email = "andresibañez@gmail.com";
+        emp2.area = "Soporte";
+        emp2.code = "EMP002";
+        employees.add(emp2);
+
+        Employee emp3 = new Employee();
+        emp3.name = "Julio Gonzalez";
+        emp3.email = "juliogonzalez@gmail.com";
+        emp3.area = "Soporte";
+        emp3.code = "EMP003";
+        employees.add(emp3);
+
+        // Generar equipos de prueba
+
+        Equipment eq1 = new Equipment();
+        eq1.code = "EQ001";
+        eq1.type = "Laptop";
+        eq1.state = "En buen estado";
+        eq1.brand = "Dell";
+        eq1.employeeCode = "EMP001";
+        equipment.add(eq1); 
+
+        Equipment eq2 = new Equipment();
+        eq2.code = "EQ002";
+        eq2.type = "Monitor";
+        eq2.state = "En buen estado";
+        eq2.brand = "Samsung";
+        eq2.employeeCode = "EMP002";
+        equipment.add(eq2);
+
+        Equipment eq3 = new Equipment();
+        eq3.code = "EQ003";
+        eq3.type = "Teclado";
+        eq3.state = "En buen estado";
+        eq3.brand = "Logitech";
+        eq3.employeeCode = "EMP003";    
+        equipment.add(eq3);
+
+        isTestDataGenerated = true;
+        System.out.println("Datos de prueba generados exitosamente.");
+
+        System.out.println("Presione cualquier tecla para continuar...");
+        scanner.nextLine(); // limpiar entrada
+        scanner.nextLine(); // esperar a que el usuario presione Enter
+        System.out.println("-----------------------------------\n");
+
+
     }
 
     public void showMenu() {
@@ -138,7 +211,8 @@ class Application {
         System.out.println("5. Atender siguiente solicitud");
         System.out.println("6. Mostrar solicitudes pendientes");
         System.out.println("7. Mostrar solicitudes solucionadas");
-        System.out.println("8. Salir");
+        System.out.println("8. Generar datos de prueba");
+        System.out.println("9. Salir");
     }
 
     public String requestCompleteRequests() {
@@ -167,10 +241,10 @@ class Application {
 
         switch (response) {
             case 1 -> {
-                System.out.println("Función para mostrar empleados aún no implementada.");
+                showEmployees();
             }
             case 2 -> {
-                System.out.println("Función para mostrar equipos aún no implementada.");
+                showEquipment();
             }
             case 3 -> {
                 showCompanyAreas();
@@ -180,6 +254,54 @@ class Application {
             }
         }
 
+
+    }
+
+    public void showEquipment() {
+
+        System.out.println("""
+            
+            ==============================================
+            =           Equipos registrados:             =
+            ==============================================
+
+        """);
+
+        for (int i = 0; i < equipment.size(); i++) {
+            Equipment eq = equipment.get(i);
+            System.out.println("╭┉( " + (i + 1) + " )");
+            System.out.println("| Código: " +  eq.code + " \n| Tipo: " + eq.type + " \n| Estado: " + eq.state + " \n| Marca: " + eq.brand + " \n| Código de empleado asignado: " + eq.employeeCode);
+            System.out.println("╰┉");
+        }
+
+        System.out.println("Presione cualquier tecla para continuar...");
+        scanner.nextLine(); // limpiar entrada
+        scanner.nextLine(); // esperar a que el usuario presione Enter
+        System.out.println("-----------------------------------\n");
+
+    }
+
+    public void showEmployees() {
+        
+         System.out.println("""
+            
+            ==============================================
+            =           Empleados registrados:           =
+            ==============================================
+
+        """);
+
+        for (int i = 0; i < employees.size(); i++) {
+            Employee employee = employees.get(i);
+            System.out.println("╭┉( " + (i + 1) + " )");
+            System.out.println("| Nombre: " +  employee.name + " \n| Correo: " + employee.email + " \n| Área: " + employee.area + " \n| Código: " + employee.code);
+            System.out.println("╰┉");
+        }
+
+        System.out.println("Presione cualquier tecla para continuar...");
+        scanner.nextLine(); // limpiar entrada
+        scanner.nextLine(); // esperar a que el usuario presione Enter
+        System.out.println("-----------------------------------\n");
 
     }
 
