@@ -34,6 +34,18 @@ class Employee {
 
 }
 
+class Request {
+
+    public String code;
+    public String employeeCode;
+    public String equipmentCode;
+    public String priority;
+    public String description;
+    public String state;
+
+    public Request() {}
+
+}
 
 class Application {
     
@@ -43,9 +55,9 @@ class Application {
     public ArrayList<Employee> employees = new ArrayList<>();
     public ArrayList<Equipment> equipment = new ArrayList<>();
 
-    private final Queue<String> pendingRequest = new ArrayDeque<>();
+    private final Queue<Request> pendingRequest = new ArrayDeque<>();
 
-    private final Deque<String> completeRequest = new ArrayDeque<>();
+    private final Deque<Request> completeRequest = new ArrayDeque<>();
 
     private final Scanner scanner;
 
@@ -136,10 +148,7 @@ class Application {
 
         if (isTestDataGenerated) {
             System.out.println("Los datos de prueba ya han sido generados.");
-            System.out.println("Presione cualquier tecla para continuar...");
-            scanner.nextLine(); // limpiar entrada
-            scanner.nextLine(); // esperar a que el usuario presione Enter
-            System.out.println("-----------------------------------\n");
+            pauseScreen();
             return;
         }
 
@@ -216,13 +225,70 @@ class Application {
     }
 
     public String requestCompleteRequests() {
-        System.out.println("Función para consultar solicitudes aún no implementada.");
+        System.out.println("""
+            =======================================================
+                     SOLICITUDES SOLUCIONADAS (PILA - LIFO)
+            =======================================================
+            """);
+
+        if (completeRequest.isEmpty()) {
+            System.out.println("Aún no se ha solucionado ninguna solicitud.");
+            pauseScreen();
+            return "";
+        }
+
+        int index = 1;
+
+        for (Request request : completeRequest) {
+            System.out.println("╭┉( Histórico #" + index + " )");
+            System.out.println("| Código de Solicitud: " + request.code);
+            System.out.println("| Código de Empleado:  " + request.employeeCode);
+            System.out.println("| Código de Equipo:    " + request.equipmentCode);
+            System.out.println("| Prioridad:           " + request.priority);
+            System.out.println("| Estado:              " + request.state);
+            System.out.println("| Descripción:         " + request.description);
+            System.out.println("╰┉");
+            index++;
+        }
+
+        System.out.println("Total de solicitudes solucionadas: " + completeRequest.size());
+        pauseScreen();
         return "";
     }
 
     public boolean requestAttendNextRequest() {
-        System.out.println("Función para atender solicitudes aún no implementada.");
-        return false;
+        System.out.println("""
+            =======================================================
+                        ATENDER SIGUIENTE SOLICITUD
+            =======================================================
+            """);
+
+        Request requestToAttend = pendingRequest.poll();
+
+        if (requestToAttend == null) {
+            System.out.println("No hay solicitudes pendientes en la cola.");
+            pauseScreen();
+            scanner.nextLine(); // limpiar entrada
+            return false;
+        }
+
+        System.out.println("Procesando la siguiente solicitud en cola...");
+        System.out.println("╭┉ Código: " + requestToAttend.code);
+        System.out.println("| Empleado: " + requestToAttend.employeeCode);
+        System.out.println("| Equipo: " + requestToAttend.equipmentCode);
+        System.out.println("| Prioridad: " + requestToAttend.priority);
+        System.out.println("| Descripción: " + requestToAttend.description);
+        System.out.println("╰┉ Estado previo: " + requestToAttend.state);
+
+        requestToAttend.state = requestStates[2]; 
+
+        completeRequest.push(requestToAttend);
+
+        System.out.println("\n¡Solicitud atendida y marcada como 'Solucionada' correctamente!");
+        System.out.println("La solicitud fue enviada al registro histórico (Pila de completadas).");
+        pauseScreen();
+        scanner.nextLine(); // limpiar entrada
+        return true;
     }
 
     public void requestShowRecords() {
@@ -274,10 +340,8 @@ class Application {
             System.out.println("╰┉");
         }
 
-        System.out.println("Presione cualquier tecla para continuar...");
+        pauseScreen();
         scanner.nextLine(); // limpiar entrada
-        scanner.nextLine(); // esperar a que el usuario presione Enter
-        System.out.println("-----------------------------------\n");
 
     }
 
@@ -298,10 +362,8 @@ class Application {
             System.out.println("╰┉");
         }
 
-        System.out.println("Presione cualquier tecla para continuar...");
+        pauseScreen();
         scanner.nextLine(); // limpiar entrada
-        scanner.nextLine(); // esperar a que el usuario presione Enter
-        System.out.println("-----------------------------------\n");
 
     }
 
@@ -319,10 +381,8 @@ class Application {
             System.out.println((i + 1) + ". " + companyAreas[i]);
         }
 
-        System.out.println("Presione cualquier tecla para continuar...");
+        pauseScreen();
         scanner.nextLine(); // limpiar entrada
-        scanner.nextLine(); // esperar a que el usuario presione Enter
-        System.out.println("-----------------------------------\n");
 
     }
 
@@ -336,11 +396,131 @@ class Application {
     }
 
     public void requestCreateRequest() {
-        System.out.println("Función para crear una solicitud aún no implementada.");
+
+    System.out.println("""
+            =======================================================
+                          CREACIÓN DE SOLICITUDES
+            =======================================================
+            """);
+
+        if (employees.isEmpty()) {
+            System.out.println("Error: No se pueden crear solicitudes sin empleados registrados.");
+            pauseScreen();
+            scanner.nextLine(); // limpiar entrada
+            return;
+        }
+
+        scanner.nextLine(); // Limpiar el buffer de entrada
+
+        Request request = new Request();
+
+        boolean isCodeValid = false;
+        while (!isCodeValid) {
+            System.out.print("Ingrese el código de la solicitud: ");
+            String code = scanner.nextLine().trim();
+
+            if (code.isEmpty()) {
+                System.out.println("El código no puede estar vacío.");
+                continue;
+            }
+
+            boolean existsInPending = pendingRequest.stream().anyMatch(r -> r.code.equalsIgnoreCase(code));
+            boolean existsInComplete = completeRequest.stream().anyMatch(r -> r.code.equalsIgnoreCase(code));
+
+            if (existsInPending || existsInComplete) {
+                System.out.println("El código de la solicitud ya está registrado. Intente con otro.");
+            } else {
+                request.code = code;
+                isCodeValid = true;
+            }
+        }
+
+        boolean isEmployeeFound = false;
+        while (!isEmployeeFound) {
+            System.out.print("Ingrese el código del empleado que realiza la solicitud: ");
+            String empCode = scanner.nextLine().trim();
+
+            boolean exists = employees.stream().anyMatch(e -> e.code.equalsIgnoreCase(empCode));
+            if (exists) {
+                request.employeeCode = empCode;
+                isEmployeeFound = true;
+            } else {
+                System.out.println("Empleado no encontrado. Verifique los registros.");
+            }
+        }
+
+        System.out.print("Ingrese el código del equipo involucrado (Opcional, presione Enter para omitir): ");
+        String eqCode = scanner.nextLine().trim();
+        if (!eqCode.isEmpty()) {
+            boolean exists = equipment.stream().anyMatch(e -> e.code.equalsIgnoreCase(eqCode));
+            request.equipmentCode = exists ? eqCode : "N/A";
+            if (!exists) {
+                System.out.println("Equipo no encontrado. Se registrará como 'N/A'.");
+            }
+        } else {
+            request.equipmentCode = "N/A";
+        }
+
+        System.out.println("\nSeleccione el nivel de prioridad:");
+        System.out.println("1. Alta\n2. Media\n3. Baja");
+        int priorityOpt = readIntInRange(1, 3, "Seleccione la prioridad (1-3): ");
+        request.priority = switch (priorityOpt) {
+            case 1 -> "Alta";
+            case 2 -> "Media";
+            default -> "Baja";
+        };
+
+        scanner.nextLine();
+
+        System.out.print("Ingrese la descripción del problema: ");
+        request.description = scanner.nextLine().trim();
+        request.state = requestStates[0]; // "Pendiente"
+
+        pendingRequest.offer(request);
+
+        System.out.println("\nSolicitud agregada exitosamente a la cola de atención.");
+        pauseScreen();
+        scanner.nextLine(); // limpiar entrada
+
+    }
+
+    private void pauseScreen() {
+        System.out.println("\nPresione cualquier tecla para continuar...");
+        scanner.nextLine();
+        System.out.println("-----------------------------------\n");
     }
 
     public void viewPendingRequests() {
-        System.out.println("Función para consultar solicitudes aún no implementada.");
+        
+        System.out.println("""
+            =======================================================
+                        SOLICITUDES PENDIENTES (COLA)
+            =======================================================
+            """);
+
+        if (pendingRequest.isEmpty()) {
+            System.out.println("No hay solicitudes pendientes por atender.");
+            pauseScreen();
+            return;
+        }
+
+        int index = 1;
+        for (Request request : pendingRequest) {
+            System.out.println("╭┉( Turno #" + index + " )");
+            System.out.println("| Código de Solicitud: " + request.code);
+            System.out.println("| Código de Empleado:  " + request.employeeCode);
+            System.out.println("| Código de Equipo:    " + request.equipmentCode);
+            System.out.println("| Prioridad:           " + request.priority);
+            System.out.println("| Estado:              " + request.state);
+            System.out.println("| Descripción:         " + request.description);
+            System.out.println("╰┉");
+            index++;
+        }
+
+        System.out.println("Total de solicitudes en espera: " + pendingRequest.size());
+        pauseScreen();
+        scanner.nextLine(); // limpiar entrada
+
     }
 
     public boolean requestRegisterEmployee() {
@@ -414,11 +594,8 @@ class Application {
         employees.add(newEmployee);
 
         System.out.println("Empleado registrado exitosamente.");
-        System.out.println("Presione cualquier tecla para continuar...");
+        pauseScreen();
         scanner.nextLine(); // limpiar entrada
-        scanner.nextLine(); // esperar a que el usuario presione Enter
-        System.out.println("-----------------------------------\n");
-
         return false;
     }
 
@@ -516,11 +693,8 @@ class Application {
             equipment.add(newEquipment);
 
             System.out.println("Equipo registrado exitosamente.");
-            System.out.println("Presione cualquier tecla para continuar...");
+            pauseScreen();
             scanner.nextLine(); // limpiar entrada
-            scanner.nextLine(); // esperar a que el usuario presione Enter
-            System.out.println("-----------------------------------\n");
-
         return true;
     }
 
