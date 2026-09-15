@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Queue;
 
+// Desarrollado en openjdk 21.0.12.1 2026-08-18
+
 class Main {
     public static void main(String[] args) {
         Application app = new Application();
@@ -94,7 +96,7 @@ class Application {
     public void run() {
         while (onMainLoop) {
             showMenu();
-            int option = readIntInRange(1, 9, "Seleccione una opción válida (1-9): ");
+            int option = readIntInRange(1, 10, "Seleccione una opción válida (1-10): ");
             processMenuOption(option);
         }
         
@@ -136,12 +138,45 @@ class Application {
             case 6 -> {viewPendingRequests();}
             case 7 -> {requestCompleteRequests();}
             case 8 -> {generateTestData();}
-            case 9 -> {
+            case 9 -> {showCreators();}
+            case 10 -> {
                 System.out.println("Saliendo del sistema...");
                 this.onMainLoop = false;
             }
             default -> System.out.println("Opción no implementada.");
         }
+    }
+
+    public void showMenu() {
+        System.out.println(makeTitle());
+        System.out.println("1. Registrar empleado");
+        System.out.println("2. Registrar equipo");
+        System.out.println("3. Crear solicitud");
+        System.out.println("4. Consultar registros");
+        System.out.println("5. Atender siguiente solicitud");
+        System.out.println("6. Mostrar solicitudes pendientes");
+        System.out.println("7. Mostrar solicitudes solucionadas");
+        System.out.println("8. Generar datos de prueba");
+        System.out.println("9. Mostrar creadores de la app");
+        System.out.println("10. Salir");
+    }
+
+    public void showCreators() {
+        
+        System.out.println("""
+            =======================================================
+                     Creadores de la app / Estudiantes
+            =======================================================
+            """);
+
+        System.out.println("╭┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉|");
+        System.out.println("|Andres Felipe Ibañez Cuta 100216824         |");
+        System.out.println("|Julio cesar González Hernández 100219419    |");
+        System.out.println("╰┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉|");
+
+        scanner.nextLine();
+        pauseScreen();
+
     }
 
     public void generateTestData() {
@@ -209,19 +244,6 @@ class Application {
         System.out.println("-----------------------------------\n");
 
 
-    }
-
-    public void showMenu() {
-        System.out.println(makeTitle());
-        System.out.println("1. Registrar empleado");
-        System.out.println("2. Registrar equipo");
-        System.out.println("3. Crear solicitud");
-        System.out.println("4. Consultar registros");
-        System.out.println("5. Atender siguiente solicitud");
-        System.out.println("6. Mostrar solicitudes pendientes");
-        System.out.println("7. Mostrar solicitudes solucionadas");
-        System.out.println("8. Generar datos de prueba");
-        System.out.println("9. Salir");
     }
 
     public String requestCompleteRequests() {
