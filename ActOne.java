@@ -5,15 +5,44 @@ import java.util.Deque;
 import java.util.Queue;
 
 // Desarrollado en openjdk 21.0.12.1 2026-08-18
+// Autor: Andres Felipe Ibañez Cuta - 100216824
+// Autor: Julio Cesar González Hernández - 100219419
+
+/**
+ * 
+ * 2026-09-28
+ * Notas de desarrollo: Para este desarrollo se hicieron llamadas
+ * por google meet mientras uno de nosotros escribía el codigo 
+ * y los dos dabamos ideas de como implementarlo.
+ * 
+ * Como entorno de desarrollo se utilizó Visual Studio Code por su
+ * facilidad para el manejo de git.
+ * 
+ * El proyecto fue desarrollado desde linux usando openjdk-21
+ * que viene incluido por defecto en la distrubución MX linux
+ * 
+ * Puede encontrar el historial de commits en el repositorio de github:
+ * https://github.com/pipelonso/java_university
+ * 
+ * Los caracteres especiales fueron tomados del sitio:
+ * https://www.adslzone.net/como-se-hace/internet/simbolos-copiar-pegar/
+ * 
+ */
+
 
 class Main {
+    /**
+     * Se opto por usar una clase principal para iniciar la aplicación
+     * esto con el fin de mantener un orden de ejecución ya que es considerado
+     * buena practica tener un punto de entrada único para la ejecución de la aplicación.
+     */
     public static void main(String[] args) {
-        Application app = new Application();
-        app.run();
+        Application app = new Application(); // arranque de aplicación
+        app.run(); // ejecución del bucle principal de la aplicación
     }
 }
 
-class Equipment {
+class Equipment { // clase usada como modelo de datos para el registro de equipos
 
     public String code;
     public String type;
@@ -25,7 +54,7 @@ class Equipment {
 
 }
 
-class Employee {
+class Employee { // clase usada como modelo de datos para el registro de empleados
 
     public String name;
     public String email;
@@ -36,7 +65,7 @@ class Employee {
 
 }
 
-class Request {
+class Request { // clase usada como modelo de datos para el registro de solicitudes
 
     public String code;
     public String employeeCode;
@@ -49,33 +78,33 @@ class Request {
 
 }
 
-class Application {
+class Application { // Aplicación principal que contiene la lógica de negocio y el flujo de ejecución del programa
     
-    public String[] requestStates;
-    public String[] companyAreas;
+    public String[] requestStates; // declaración de los estados de las solicitudes - vacía por defecto, se llenará en el constructor
+    public String[] companyAreas; // declaración de las áreas de la empresa - vacía por defecto, se llenará en el constructor
     public boolean onMainLoop;
-    public ArrayList<Employee> employees = new ArrayList<>();
-    public ArrayList<Equipment> equipment = new ArrayList<>();
+    public ArrayList<Employee> employees = new ArrayList<>(); // declaración de la lista de empleados
+    public ArrayList<Equipment> equipment = new ArrayList<>(); // declaración de la lista de equipos
 
-    private final Queue<Request> pendingRequest = new ArrayDeque<>();
+    private final Queue<Request> pendingRequest = new ArrayDeque<>(); // declaración de la cola de solicitudes pendientes
 
-    private final Deque<Request> completeRequest = new ArrayDeque<>();
+    private final Deque<Request> completeRequest = new ArrayDeque<>(); // declaración de la pila de solicitudes completadas
 
-    private final Scanner scanner;
+    private final Scanner scanner; // declaración del objeto Scanner para leer la entrada del usuario de forma global
 
-    private boolean isTestDataGenerated = false;
+    private boolean isTestDataGenerated = false; // Esta variable evalua si la data de prueba ya fue generada para evitar duplicados
 
     public Application() {
-        this.scanner = new Scanner(System.in);
-        this.onMainLoop = true;
+        this.scanner = new Scanner(System.in); // instancia del scanner para leer la entrada del usuario
+        this.onMainLoop = true; // variable que controla el bucle principal de ejecución de la aplicación
 
-        this.requestStates = new String[] {
+        this.requestStates = new String[] { // inicialización de los estados de las solicitudes
             "Pendiente",
             "En atención",
             "Solucionada"
         };
 
-        this.companyAreas = new String[] {
+        this.companyAreas = new String[] { // inicialización de las áreas de la empresa
             "Soporte",
             "Ventas",
             "Administración",
@@ -93,42 +122,53 @@ class Application {
         };
     }
 
-    public void run() {
+    public void run() { // metodo de arranque de la aplicación, contiene el bucle principal de ejecución
         while (onMainLoop) {
-            showMenu();
-            int option = readIntInRange(1, 10, "Seleccione una opción válida (1-10): ");
-            processMenuOption(option);
+            showMenu(); // funcion que muestra el menú principal de la aplicación
+            int option = readIntInRange(1, 10, "Seleccione una opción válida (1-10): "); // seleccion de opción del menú principal - basado en rango
+            processMenuOption(option); // Esto procesa la entrada del usuario
         }
         
         this.scanner.close();
     }
 
-    public int readIntInRange(int min, int max, String prompt) {
+    public int readIntInRange(int min, int max, String prompt) { // metodo para leer un entero dentro de un rango específico, con manejo de errores y validación
         int option = -1;
-        boolean isValidOption = false;
+        boolean isValidOption = false; // variable confirma estado de si la opción ingresada es válida
 
         while (!isValidOption) {
-            System.out.print(prompt);
+            System.out.print(prompt); // muestra del texto enviado como parámetro para solicitar la entrada del usuario
             try {
-                option = scanner.nextInt();
+                option = scanner.nextInt(); // petición de entrada del usuario numerica
 
-                if (option >= min && option <= max) {
-                    isValidOption = true;
+                if (option >= min && option <= max) { // validación de rango
+                    isValidOption = true; // esto dice que lo que puso el usuario esta bien 
                 } else {
-                    throw new IllegalArgumentException("Número fuera del rango permitido.");
+                    throw new IllegalArgumentException("Número fuera del rango permitido."); // Fallo - Error - Explosion de excepción - Se lanza una excepción para indicar que el número ingresado está fuera del rango permitido
                 }
 
-            } catch (Exception e) {
-                System.out.println("Error: Debe ingresar un entero entre " + min + " y " + max + ".\n");
-                scanner.nextLine();
+            } catch (Exception e) { // captura de excepción en caso de fallo - por ejemplo cuando ingresan una letra en vez de un numero
+                System.out.println("Error: Debe ingresar un entero entre " + min + " y " + max + ".\n"); // mensaje de error para el usuario
+                scanner.nextLine(); // limpieza del buffer de entrada para evitar un bucle infinito en caso de error
             }
         }
 
-        return option;
+        return option; // retorno del valor ingresado por el usuario, ya validado y dentro del rango permitido
 
     }
 
-    private void processMenuOption(int option) {
+    /**
+     * Ya que se habpia requerido que se usara un switch para el menú principal, 
+     * se implementó este método que recibe la opción seleccionada por el usuario 
+     * y ejecuta la acción correspondiente.     
+     * 
+     * Se busco la forma de hacerlo mas compato y 
+     * legible usando la sintaxis de switch moderna 
+     * de Java (->) en lugar de los tradicionales case y break que
+     * me parecen mas dificiles de leer.
+     *  
+     */
+    private void processMenuOption(int option) { // metodo que procesa la opción seleccionada por el usuario en el menú principal
         switch (option) {
             case 1 -> {requestRegisterEmployee();}
             case 2 -> {requestRegisterEquipment();}
@@ -143,11 +183,11 @@ class Application {
                 System.out.println("Saliendo del sistema...");
                 this.onMainLoop = false;
             }
-            default -> System.out.println("Opción no implementada.");
+            default -> System.out.println("Opción no implementada."); // en teoria esto nunca debería aparecer debido a las validaciones anteriores
         }
     }
 
-    public void showMenu() {
+    public void showMenu() { // Método que muestra el menú principal de la aplicación
         System.out.println(makeTitle());
         System.out.println("1. Registrar empleado");
         System.out.println("2. Registrar equipo");
@@ -161,7 +201,7 @@ class Application {
         System.out.println("10. Salir");
     }
 
-    public void showCreators() {
+    public void showCreators() { // metodo que nos muestra como creadores de la app - propuesto por Julio
         
         System.out.println("""
             =======================================================
@@ -179,11 +219,11 @@ class Application {
 
     }
 
-    public void generateTestData() {
+    public void generateTestData() { // Este metodo la va a ayudar a generar data de pruebas
 
-        if (isTestDataGenerated) {
+        if (isTestDataGenerated) { // validación global que verifica si los datos de prueba ya fueron generados
             System.out.println("Los datos de prueba ya han sido generados.");
-            pauseScreen();
+            pauseScreen(); // pantalla de pausa para que el usuario pueda leer el mensaje antes de continuar
             return;
         }
 
@@ -246,7 +286,7 @@ class Application {
 
     }
 
-    public String requestCompleteRequests() {
+    public String requestCompleteRequests() { // Este metodo muestra las solicitudes ya completadas
         System.out.println("""
             =======================================================
                      SOLICITUDES SOLUCIONADAS (PILA - LIFO)
@@ -261,7 +301,7 @@ class Application {
 
         int index = 1;
 
-        for (Request request : completeRequest) {
+        for (Request request : completeRequest) { // bucle que muestra las solicitudes - equivalente a un foreach
             System.out.println("╭┉( Histórico #" + index + " )");
             System.out.println("| Código de Solicitud: " + request.code);
             System.out.println("| Código de Empleado:  " + request.employeeCode);
@@ -273,12 +313,12 @@ class Application {
             index++;
         }
 
-        System.out.println("Total de solicitudes solucionadas: " + completeRequest.size());
-        pauseScreen();
+        System.out.println("Total de solicitudes solucionadas: " + completeRequest.size()); // mensaje que muestra el total de solicitudes solucionadas
+        pauseScreen(); // espera para que el usuario pueda leer
         return "";
     }
 
-    public boolean requestAttendNextRequest() {
+    public boolean requestAttendNextRequest() { // metodo para poder atender una solicitud de usuario
         System.out.println("""
             =======================================================
                         ATENDER SIGUIENTE SOLICITUD
@@ -287,11 +327,11 @@ class Application {
 
         Request requestToAttend = pendingRequest.poll();
 
-        if (requestToAttend == null) {
+        if (requestToAttend == null) { // validación de solicitudes en cola
             System.out.println("No hay solicitudes pendientes en la cola.");
             pauseScreen();
             scanner.nextLine(); // limpiar entrada
-            return false;
+            return false; // Este retorno solo sirve para evitar que el proceso continue 
         }
 
         System.out.println("Procesando la siguiente solicitud en cola...");
@@ -302,18 +342,21 @@ class Application {
         System.out.println("| Descripción: " + requestToAttend.description);
         System.out.println("╰┉ Estado previo: " + requestToAttend.state);
 
-        requestToAttend.state = requestStates[2]; 
+        requestToAttend.state = requestStates[2];  // esto cambia la solicitud a completada
 
-        completeRequest.push(requestToAttend);
+        completeRequest.push(requestToAttend); // aquí se añade la solicitud ya completada
 
         System.out.println("\n¡Solicitud atendida y marcada como 'Solucionada' correctamente!");
         System.out.println("La solicitud fue enviada al registro histórico (Pila de completadas).");
-        pauseScreen();
+        pauseScreen(); // espera de usuario
         scanner.nextLine(); // limpiar entrada
         return true;
     }
 
-    public void requestShowRecords() {
+    /**
+     * Este metodo realmente esta pensando para mostrar los datos ya definidos al iniciar
+     */
+    public void requestShowRecords() { // Esto despliega otro menu para mirar los registros del sistema
         
         System.out.println("""
         ========================================================
@@ -325,7 +368,7 @@ class Application {
         System.out.println("2) Mostrar equipos registrados");
         System.out.println("3) Mostrar areas de la empresa");
 
-        int response = readIntInRange(1, 3, "Seleccione una opción válida (1-3): ");
+        int response = readIntInRange(1, 3, "Seleccione una opción válida (1-3): "); // obtenee input de usuario de 1 a 3
 
         switch (response) {
             case 1 -> {
@@ -345,7 +388,7 @@ class Application {
 
     }
 
-    public void showEquipment() {
+    public void showEquipment() { // esto muestra los equipos registrados 
 
         System.out.println("""
             
@@ -367,7 +410,7 @@ class Application {
 
     }
 
-    public void showEmployees() {
+    public void showEmployees() { // Esto muestra los empleados registrados
         
          System.out.println("""
             
@@ -377,8 +420,8 @@ class Application {
 
         """);
 
-        for (int i = 0; i < employees.size(); i++) {
-            Employee employee = employees.get(i);
+        for (int i = 0; i < employees.size(); i++) { // Estructura comun en bucles <declaración> <condición> <incremento>
+            Employee employee = employees.get(i); // obtención de objeto usando indice
             System.out.println("╭┉( " + (i + 1) + " )");
             System.out.println("| Nombre: " +  employee.name + " \n| Correo: " + employee.email + " \n| Área: " + employee.area + " \n| Código: " + employee.code);
             System.out.println("╰┉");
@@ -399,7 +442,7 @@ class Application {
 
         """);
 
-        for (int i = 0; i < companyAreas.length; i++) {
+        for (int i = 0; i < companyAreas.length; i++) { // Esto imprime las areas de la empresa, es mas simple por que solo son strings[]
             System.out.println((i + 1) + ". " + companyAreas[i]);
         }
 
@@ -408,7 +451,7 @@ class Application {
 
     }
 
-    public String makeTitle() {
+    public String makeTitle() { // Este metodo muestra el titulo. Se llama así por (Julio - Andres) = (Jul - An)
         return """
         ========================================================
                           JULAN SOFTWARE
@@ -417,7 +460,7 @@ class Application {
         """;
     }
 
-    public void requestCreateRequest() {
+    public void requestCreateRequest() {  // Este metodo crea solicitudes siempre que halla empleados
 
     System.out.println("""
             =======================================================
@@ -425,7 +468,7 @@ class Application {
             =======================================================
             """);
 
-        if (employees.isEmpty()) {
+        if (employees.isEmpty()) { // Si no hay empleados no pueden haber solicitudes 
             System.out.println("Error: No se pueden crear solicitudes sin empleados registrados.");
             pauseScreen();
             scanner.nextLine(); // limpiar entrada
@@ -446,8 +489,13 @@ class Application {
                 continue;
             }
 
+            // Esto busca si ya hay peticiones completas y pendientes
+            // Se busco un recurso en internet para buscar como filtrar de forma efectiva
+            // y mas rapida posible
             boolean existsInPending = pendingRequest.stream().anyMatch(r -> r.code.equalsIgnoreCase(code));
             boolean existsInComplete = completeRequest.stream().anyMatch(r -> r.code.equalsIgnoreCase(code));
+
+            // En el requerimiento se especificó que fuera validada el codigo de las solicitudes
 
             if (existsInPending || existsInComplete) {
                 System.out.println("El código de la solicitud ya está registrado. Intente con otro.");
@@ -462,7 +510,7 @@ class Application {
             System.out.print("Ingrese el código del empleado que realiza la solicitud: ");
             String empCode = scanner.nextLine().trim();
 
-            boolean exists = employees.stream().anyMatch(e -> e.code.equalsIgnoreCase(empCode));
+            boolean exists = employees.stream().anyMatch(e -> e.code.equalsIgnoreCase(empCode)); // esto verifica que el empleado existe antes de asignar una solicitud
             if (exists) {
                 request.employeeCode = empCode;
                 isEmployeeFound = true;
@@ -471,11 +519,12 @@ class Application {
             }
         }
 
+        // Se hizo que el quipo fuera opcional porque de alguna manera tiene sentido ya que no todas las solicitudes pudieron haber pasado en un equipo
         System.out.print("Ingrese el código del equipo involucrado (Opcional, presione Enter para omitir): ");
         String eqCode = scanner.nextLine().trim();
         if (!eqCode.isEmpty()) {
             boolean exists = equipment.stream().anyMatch(e -> e.code.equalsIgnoreCase(eqCode));
-            request.equipmentCode = exists ? eqCode : "N/A";
+            request.equipmentCode = exists ? eqCode : "N/A"; // Esto de aquí es un operador ternario, los uso mucho en php y python
             if (!exists) {
                 System.out.println("Equipo no encontrado. Se registrará como 'N/A'.");
             }
@@ -486,7 +535,7 @@ class Application {
         System.out.println("\nSeleccione el nivel de prioridad:");
         System.out.println("1. Alta\n2. Media\n3. Baja");
         int priorityOpt = readIntInRange(1, 3, "Seleccione la prioridad (1-3): ");
-        request.priority = switch (priorityOpt) {
+        request.priority = switch (priorityOpt) { // esto de aquí sigue la misma estructura del menu pero al ser un string lo romará como valor de retorno
             case 1 -> "Alta";
             case 2 -> "Media";
             default -> "Baja";
@@ -496,7 +545,7 @@ class Application {
 
         System.out.print("Ingrese la descripción del problema: ");
         request.description = scanner.nextLine().trim();
-        request.state = requestStates[0]; // "Pendiente"
+        request.state = requestStates[0]; // "Pendiente" Esto asigna la solicitud como pendiente de realizar
 
         pendingRequest.offer(request);
 
@@ -506,13 +555,13 @@ class Application {
 
     }
 
-    private void pauseScreen() {
+    private void pauseScreen() { // Aqui el metodo para que el usuario pueda leer con mas calma
         System.out.println("\nPresione cualquier tecla para continuar...");
         scanner.nextLine();
         System.out.println("-----------------------------------\n");
     }
 
-    public void viewPendingRequests() {
+    public void viewPendingRequests() { // este metodo muestra las solicitudes en cola
         
         System.out.println("""
             =======================================================
@@ -520,14 +569,14 @@ class Application {
             =======================================================
             """);
 
-        if (pendingRequest.isEmpty()) {
+        if (pendingRequest.isEmpty()) { // verificaciones de si la lista esta vacía
             System.out.println("No hay solicitudes pendientes por atender.");
             pauseScreen();
             return;
         }
 
         int index = 1;
-        for (Request request : pendingRequest) {
+        for (Request request : pendingRequest) { // esto es un equivalente a unn foreach para mostrar las solicitudes
             System.out.println("╭┉( Turno #" + index + " )");
             System.out.println("| Código de Solicitud: " + request.code);
             System.out.println("| Código de Empleado:  " + request.employeeCode);
@@ -567,6 +616,10 @@ class Application {
         String email = scanner.nextLine();
         newEmployee.email = email;
 
+        /*
+            Esta parte es genial porque muestra el menu de forma dinamica
+        */
+
         System.out.println("""
         -> Seleccionar area
         ╭───────────────────────────────
@@ -598,7 +651,7 @@ class Application {
 
             boolean codeExists = false;
 
-            for (Employee employee : employees) {
+            for (Employee employee : employees) { // este bucle es para verificar si un usuario ya existe
                 if (employee.code.equals(code)) {
                     System.out.println("El código ya está en uso. Por favor, ingrese un código diferente.");
                     codeExists = true;
@@ -621,7 +674,7 @@ class Application {
         return false;
     }
 
-    public boolean requestRegisterEquipment() {
+    public boolean requestRegisterEquipment() { // metodo para registrar equipos
 
 
         System.out.println("""
@@ -678,7 +731,15 @@ class Application {
             boolean isEmployeeFound = false;
 
             while (!isEmployeeFound) {
-                
+
+                /*
+                    Este bucle es genial porque puedes buscar un empleado.
+
+                    Julio fue el que propuso la idea, porque era molesto tener que memorizar
+                    los codigos de los empleados, entonces es mas facil saber una parte del codigo
+                    en vez de saber el codigo completo
+                */
+
                 System.out.println("Digite un codigo de empleado para buscar: ");
                 String employeeCode = scanner.nextLine();
 
@@ -695,14 +756,16 @@ class Application {
 
                     int idx = 0;
 
-                    for (Employee employee : employeesFound) {
+                    for (Employee employee : employeesFound) { // este bucle muestra los empleados despues de encontrarlos
                         idx++;
                         System.out.println("╭┉( " + idx + " )┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉");
                         System.out.println("Código: " + employee.code + "\nNombre: " + employee.name + "\nÁrea: " + employee.area);
                         System.out.println("╰┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉\n");
                     }
                     
+                    // seccion de empleado pero tomando como limite el numero de empleados registrados de forma dinamica
                     int selectedEmployeeIndex = readIntInRange(1, employeesFound.size(), "Seleccione un empleado válido (1-" + employeesFound.size() + "): ") - 1;
+                    // Aquí se asigna el codigo seleccionado
                     newEquipment.employeeCode = employeesFound.get(selectedEmployeeIndex).code;
                     isEmployeeFound = true;
 
@@ -712,7 +775,7 @@ class Application {
 
             }
 
-            equipment.add(newEquipment);
+            equipment.add(newEquipment); // Aquí se añade el equipo a la lista de equipos registrados
 
             System.out.println("Equipo registrado exitosamente.");
             pauseScreen();
