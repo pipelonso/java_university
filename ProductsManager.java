@@ -12,6 +12,30 @@ public class ProductsManager {
     private int raiz = -1; // Índice de la raíz del árbol binario de búsqueda, -1 indica que el árbol está vacío
     private int cantidad = 0; // Cantidad de nodos actualmente en el árbol binario de búsqueda
 
+    // Desarrollado en openjdk 21.0.12.1 2026-08-18
+    // Autor: Andres Felipe Ibañez Cuta - 100216824
+    // Autor: Julio Cesar González Hernández - 100219419
+
+    /**
+     * Notas de desarrollo:
+     * Igual que la actividad anterior para esta actividad se hizo llamada en google meet mientras 
+     * averiguabamos como relacionar las listas de enteros con los nodos de un arbol, al cabo de un rato
+     * descubrimos como hacerlo al representar los arreglos izquierdo y derecho como indicadores de los hijos de cada nodo, 
+     * y el arreglo de codigos y nombres como los datos de cada nodo.
+     * 
+     * De igual manera omo entorno de desarrollo se utilizó Visual Studio Code por su
+     * facilidad para el manejo de git.
+     * 
+     * El proyecto fue desarrollado desde linux usando openjdk-21
+     * que viene incluido por defecto en la distrubución MX linux
+     * 
+     * Puede encontrar el historial de commits en el repositorio de github:
+     * https://github.com/pipelonso/java_university
+     * 
+     * Los caracteres especiales fueron tomados del sitio:
+     * https://www.adslzone.net/como-se-hace/internet/simbolos-copiar-pegar/
+     * 
+     */ 
 
     public ProductsManager() {
         this.scanner = new Scanner(System.in);
@@ -19,6 +43,13 @@ public class ProductsManager {
             izquierdo[i] = -1;
             derecho[i] = -1;
         }
+    }
+
+    public static void main(String[] args) { // Método principal para ejecutar la aplicación
+    
+        ProductsManager PM = new ProductsManager(); // Crea una instancia de ProductsManager
+        PM.menu(); // Llama al método menu() para iniciar la interacción con el usuario
+
     }
 
     public String getTittle() {
@@ -130,13 +161,6 @@ public class ProductsManager {
 
         System.out.println("╰┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉");
         pauseScreen();
-    }
-
-    public static void main(String[] args) { // Método principal para ejecutar la aplicación
-    
-        ProductsManager PM = new ProductsManager(); // Crea una instancia de ProductsManager
-        PM.menu(); // Llama al método menu() para iniciar la interacción con el usuario
-
     }
 
     private void pauseScreen() { // Aqui el metodo para que el usuario pueda leer con mas calma
