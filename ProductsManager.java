@@ -30,7 +30,7 @@ public class ProductsManager {
      * que viene incluido por defecto en la distrubución MX linux
      * 
      * Puede encontrar el historial de commits en el repositorio de github:
-     * https://github.com/pipelonso/java_university
+     * https://github.com/pipelonso/java_university/commits/main/
      * 
      * Los caracteres especiales fueron tomados del sitio:
      * https://www.adslzone.net/como-se-hace/internet/simbolos-copiar-pegar/
