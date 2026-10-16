@@ -14,14 +14,9 @@ public class ProductsManager {
 
     // Desarrollado en openjdk 21.0.12.1 2026-08-18
     // Autor: Andres Felipe Ibañez Cuta - 100216824
-    // Autor: Julio Cesar González Hernández - 100219419
 
     /**
-     * Notas de desarrollo:
-     * Igual que la actividad anterior para esta actividad se hizo llamada en google meet mientras 
-     * averiguabamos como relacionar las listas de enteros con los nodos de un arbol, al cabo de un rato
-     * descubrimos como hacerlo al representar los arreglos izquierdo y derecho como indicadores de los hijos de cada nodo, 
-     * y el arreglo de codigos y nombres como los datos de cada nodo.
+     *
      * 
      * De igual manera omo entorno de desarrollo se utilizó Visual Studio Code por su
      * facilidad para el manejo de git.
@@ -72,7 +67,7 @@ public class ProductsManager {
             System.out.println("1. Insertar producto");
             System.out.println("2. Buscar producto");
             System.out.println("3. Mostrar productos ordenados");
-            System.out.println("4. Mostrar creadores");
+            System.out.println("4. Mostrar creador");
             System.out.println("5. Salir");
             System.out.print("Seleccione una opción: ");
 
@@ -97,13 +92,12 @@ public class ProductsManager {
             
         System.out.println("""
             =======================================================
-                     Creadores de la app / Estudiantes
+                     Creador de la app / Estudiante
             =======================================================
             """);
 
         System.out.println("╭┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉|");
         System.out.println("|Andres Felipe Ibañez Cuta 100216824         |");
-        System.out.println("|Julio cesar González Hernández 100219419    |");
         System.out.println("╰┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉|");
 
         scanner.nextLine();
