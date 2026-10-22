@@ -4,21 +4,42 @@ import java.util.Scanner;
 
 class NetworkManager {
         
-    private final Scanner scanner;
 
-    protected String[] equipos;
+    // Desarrollado en openjdk 21.0.12.1 2026-08-18
+    // Autor: Andres Felipe Ibañez Cuta - 100216824
+    
+    /**
+     *
+     * 
+     * De igual manera omo entorno de desarrollo se utilizó Visual Studio Code por su
+     * facilidad para el manejo de git.
+     * 
+     * El proyecto fue desarrollado desde linux usando openjdk-21
+     * que viene incluido por defecto en la distrubución MX linux
+     * 
+     * Puede encontrar el historial de commits en el repositorio de github:
+     * https://github.com/pipelonso/java_university/commits/main/
+     * 
+     * Los caracteres especiales fueron tomados del sitio:
+     * https://www.adslzone.net/como-se-hace/internet/simbolos-copiar-pegar/
+     * 
+     */ 
 
-    int[][] conexiones = new int[5][5];
-    boolean[] visitados = new boolean[5];
+    private final Scanner scanner; // Objeto Scanner utilizado para leer la entrada del usuario desde la consola
 
-    Queue<Integer> cola = new LinkedList<>();
+    protected String[] equipos; // Arreglo de equipos que representa los nombres de los equipos en la red
 
-    public NetworkManager() {
+    int[][] conexiones = new int[5][5]; // Matriz de conexiones que representa las conexiones entre los equipos en la red
+    boolean[] visitados = new boolean[5]; // Arreglo que indica si un equipo ha sido visitado durante el recorrido BFS
+
+    Queue<Integer> cola = new LinkedList<>(); // Cola utilizada para el recorrido BFS, donde se almacenan los equipos a visitar
+
+    public NetworkManager() { // Constructor de la clase NetworkManager que inicializa los atributos de la clase
 
         this.scanner = new Scanner(System.in);
-        this.equipos = new String[]{"Computador", "Impresora", "Servidor", "Enrutador", "Portátil"};
+        this.equipos = new String[]{"Computador", "Impresora", "Servidor", "Enrutador", "Portátil"}; // Arreglo de equipos inicializado con nombres de ejemplo
 
-        this.conexiones = new int[][]{
+        this.conexiones = new int[][]{ // Matriz de conexiones inicializada con ceros, indicando que no hay conexiones entre los equipos al inicio
             {0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0},
@@ -35,12 +56,12 @@ class NetworkManager {
 
     }
 
-    public void run() {
+    public void run() { // metodo principal que ejecuta el programa y muestra el menú de opciones al usuario
         
         int option = -1;
 
         do {
-            System.out.println(getTittle());
+            System.out.println(getTittle()); // Se llama al método getTittle para mostrar el título de la aplicación en la consola
             System.out.println("1. Mostrar equipos");
             System.out.println("2. Conectar dos equipos");
             System.out.println("3. Mostrar matriz de conexiones");
@@ -69,7 +90,7 @@ class NetworkManager {
 
     }
 
-    private void requestShowEquipments(boolean showTitle) {
+    private void requestShowEquipments(boolean showTitle) { // Metodo que recibe llamado para mostrar los equipos disponibles en la red
 
         if (showTitle) {
             System.out.println("""
@@ -88,12 +109,12 @@ class NetworkManager {
         System.out.println("╰┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉");
 
         if (showTitle) {
-            pauseScreen();
+            pauseScreen(); // Se llama al método pauseScreen para pausar la ejecución y permitir que el usuario lea la información antes de continuar
         }
 
     }
 
-    private void requestConnectEquipments() {
+    private void requestConnectEquipments() { // Metodo que recibe llamado para conectar equipos
         
         System.out.println("""
                     =======================================================
@@ -113,18 +134,18 @@ class NetworkManager {
             System.out.print("Ingrese el número del segundo equipo a conectar: ");
             int equipo2 = readIntInRange(1, equipos.length, "Ingrese el número del segundo equipo a conectar: ") - 1;
 
-            if (equipo1 == equipo2) {
+            if (equipo1 == equipo2) { // Se verifica si el usuario intenta conectar un equipo consigo mismo
                 System.out.println("⊠ No se puede conectar un equipo consigo mismo.");
                 return;
             }
 
-            if (conexiones[equipo1][equipo2] == 1) {
+            if (conexiones[equipo1][equipo2] == 1) { // Se verifica si ya existe una conexión entre los equipos en la matriz de conexiones
                 System.out.println("⊠ Los equipos ya están conectados.");
                 return;
             }
 
-            conexiones[equipo1][equipo2] = 1;
-            conexiones[equipo2][equipo1] = 1;
+            conexiones[equipo1][equipo2] = 1; // Se establece la conexión entre los equipos en la matriz de conexiones
+            conexiones[equipo2][equipo1] = 1; // Se establece la conexión entre los equipos en la matriz de conexiones (simétrica)
 
             System.out.println("✓ Conexión establecida entre " + equipos[equipo1] + " y " + equipos[equipo2] + ".");
 
@@ -136,7 +157,7 @@ class NetworkManager {
 
     }
 
-    private void requestShowConnectionMatrix() {
+    private void requestShowConnectionMatrix() { // Metodo que recibe llamado para mostrar la matriz de conexiones
         
         System.out.println("""
                     =======================================================
@@ -146,11 +167,11 @@ class NetworkManager {
 
         System.out.print("  ");
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) { // Se recorre la matriz de conexiones para mostrar los encabezados de columna en la consola
             System.out.print(" " + (i + 1));
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) { // Se recorre la matriz de conexiones para mostrarla en la consola
             System.out.print("\n" + (i + 1) + " ");
             for (int j = 0; j < 5; j++) {
                 System.out.print(" " + conexiones[i][j]);
@@ -162,7 +183,7 @@ class NetworkManager {
 
     }
 
-    private void requestShowWithBFS() {
+    private void requestShowWithBFS() { // Metodo que recibe llamado para ejecutar bfs
 
         System.out.println("""
                     =======================================================
@@ -173,7 +194,7 @@ class NetworkManager {
         System.out.print("Ingrese el número del equipo desde el cual iniciar el recorrido: ");
         int startEquipo = readIntInRange(1, equipos.length, "Ingrese el número del equipo desde el cual iniciar el recorrido: ") - 1;
 
-        bfs(startEquipo);
+        bfs(startEquipo); // Se llama al método bfs con el equipo de inicio proporcionado por el usuario
 
         pauseScreen();
 
@@ -181,23 +202,23 @@ class NetworkManager {
     
     private void bfs(int startEquipo) { 
         
-        for (int i = 0; i < visitados.length; i++) {
+        for (int i = 0; i < visitados.length; i++) { // Se inicializa el arreglo de visitados para marcar todos los equipos como no visitados antes de iniciar el recorrido BFS
             visitados[i] = false;
         }
 
-        cola.clear();
+        cola.clear(); // Se limpia la cola antes de iniciar el recorrido BFS
 
         visitados[startEquipo] = true;
         cola.add(startEquipo);
 
         System.out.println("Recorrido BFS desde " + equipos[startEquipo] + ":");
 
-        while (!cola.isEmpty()) {
+        while (!cola.isEmpty()) { // Mientras la cola no esté vacía, se procesan los equipos conectados
             int equipoActual = cola.poll();
-            System.out.print(" -> " + equipos[equipoActual]);
+            System.out.print(" -> " + equipos[equipoActual]); // Se imprime el equipo actual en el recorrido
 
-            for (int i = 0; i < conexiones.length; i++) {
-                if (conexiones[equipoActual][i] == 1 && !visitados[i]) {
+            for (int i = 0; i < conexiones.length; i++) { // Se recorre la matriz de conexiones para encontrar los equipos conectados al equipo actual
+                if (conexiones[equipoActual][i] == 1 && !visitados[i]) { // Si hay una conexión y el equipo no ha sido visitado, se marca como visitado y se agrega a la cola
                     visitados[i] = true;
                     cola.add(i);
                 }
@@ -205,11 +226,11 @@ class NetworkManager {
         }
 
         System.out.println(); // Salto de línea para mejorar la legibilidad en la salida de la consola
-        System.out.println("Recorrido BFS completado.");
+        System.out.println("Recorrido BFS completado."); // Mensaje indicando que el recorrido BFS ha finalizado
 
     }
 
-    public String getTittle() {
+    public String getTittle() { // metodo que nos muestra el titulo de la app
 
         return """
             ========================================
